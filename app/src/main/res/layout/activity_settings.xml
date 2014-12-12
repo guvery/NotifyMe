@@ -20,6 +20,12 @@
             android:summary="@string/priority_list_preference_summary"
             android:title="@string/priority_list_preference" />
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="settings_create_notification"
+            android:summary="@string/create_notification_summary"
+            android:title="@string/create_notification" />
+
         <!-- <ListPreference
                 android:id="@+id/history_action"
                 android:defaultValue="NotifyMe"

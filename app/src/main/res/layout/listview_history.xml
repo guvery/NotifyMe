@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="8dp"
-                android:paddingRight="8dp"/>
+                android:paddingRight="8dp" />
 
             <TextView
                 android:id="@+id/title"
@@ -46,7 +46,7 @@
                 android:textSize="20sp"
                 android:fontFamily="sans-serif"
                 android:singleLine="true"
-                android:textIsSelectable="false"/>
+                android:textIsSelectable="false" />
 
             <TextView
                 android:id="@+id/body"
@@ -57,7 +57,7 @@
                 android:layout_toRightOf="@id/imageView"
                 android:textSize="15sp"
                 android:fontFamily="sans-serif-light"
-                android:textIsSelectable="false"/>
+                android:textIsSelectable="false" />
 
             <TextView
                 android:id="@+id/details"
@@ -68,7 +68,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:textIsSelectable="false"/>
+                android:textIsSelectable="false" />
 
         </RelativeLayout>
 

@@ -14,6 +14,7 @@
 
     <item name="accent" type="color">#D32F2F</item>
     <item name="accent_pressed" type="color">#B71C1C</item>
-    <item name="accent_ripple" type="color">#B71C1C</item> <!--E57373-->
+    <item name="accent_ripple" type="color">#B71C1C</item>
+    <!--E57373-->
 
 </resources>

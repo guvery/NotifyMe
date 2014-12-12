@@ -1,10 +1,5 @@
 package com.guvery.notifyme;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.preference.PreferenceManager;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,20 +71,20 @@ public class NotificationHistory {
                 int[] time = {-1, -1};
                 n.setTime(time);
             }
-                try {
-                    ImageAdapter ia = new ImageAdapter(null);
-                    int imageId = Integer.parseInt(
-                            line.substring(line.indexOf("<I>") + 3, line.indexOf("</I>")));
-                    if (ia.isAnIcon(imageId)) {
-                        n.setImageId(imageId);
-                    } else {
-                        n.setImageId(n.getImageId());
-                    }
-                } catch (StringIndexOutOfBoundsException e) {
-                    // catch the exception when upgrading from older versions that
-                    // did not store an image id variable
+            try {
+                ImageAdapter ia = new ImageAdapter(null);
+                int imageId = Integer.parseInt(
+                        line.substring(line.indexOf("<I>") + 3, line.indexOf("</I>")));
+                if (ia.isAnIcon(imageId)) {
+                    n.setImageId(imageId);
+                } else {
                     n.setImageId(n.getImageId());
                 }
+            } catch (StringIndexOutOfBoundsException e) {
+                // catch the exception when upgrading from older versions that
+                // did not store an image id variable
+                n.setImageId(n.getImageId());
+            }
             notifications.add(n);
         }
 

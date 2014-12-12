@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -28,30 +26,34 @@ import java.util.ArrayList;
 
 /**
  * Things to check before updating:
- * on upgrade, icons dont show from old history notifications
+ * Bump version code + name + string app_version
+ *
+ * Currently SettingsActivity accesses the static Notifier.ontoggle method
+ * I need to somehow get settingsactivity its own notifier instance with context(!)
+ * so i can add the L settings option when long pressing the create notif in notif drawer
+ *
  */
 
-
 public class MainActivity extends ActionBarActivity {
-    public static final String NOTIF_FOLDER = "notifications";
-    private final Context mContext = this;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private Notifier mNotifier;
     private NotificationHistory mNotifHistory;
     private ArrayList<Notif> mDataSet;
     private TextView empty;
+    private SharedPreferences mSharedPrefs;
+
+    private final Context mContext = this;
+    public static final String NOTIF_FOLDER = "notifications";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        // Disable shadow
-        //getSupportActionBar().setElevation(0);
-
         empty = (TextView) findViewById(R.id.empty);
+
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Set up our notifier (to clear notifications etc..)
         mNotifier = new Notifier(this);
@@ -76,34 +78,34 @@ public class MainActivity extends ActionBarActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle(n.getTitle()).setIcon(ImageAdapter.getDarkFromLight(n.getImageId()));
                 builder.setItems(new CharSequence[]{"Notify Me", "Delete", "Share", "Copy"},
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case (0):
-                                    mNotifier.notifyFromHistory(n);
-                                    break;
-                                case (1):
-                                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
-                                    dialogBuilder.setMessage(R.string.delete_history_item);
-                                    dialogBuilder.setNegativeButton(R.string.no, null);
-                                    dialogBuilder.setPositiveButton(R.string.yes,
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    removeNotification(n);
-                                                }
-                                            });
-                                    AlertDialog dialog1 = dialogBuilder.create();
-                                    dialog1.show();
-                                    break;
-                                case (2):
-                                    shareNotification(n);
-                                    break;
-                                case (3):
-                                    copy(n);
-                                    break;
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case (0):
+                                        mNotifier.notifyFromHistory(n);
+                                        break;
+                                    case (1):
+                                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+                                        dialogBuilder.setMessage(R.string.delete_history_item);
+                                        dialogBuilder.setNegativeButton(R.string.no, null);
+                                        dialogBuilder.setPositiveButton(R.string.yes,
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        removeNotification(n);
+                                                    }
+                                                });
+                                        AlertDialog dialog1 = dialogBuilder.create();
+                                        dialog1.show();
+                                        break;
+                                    case (2):
+                                        shareNotification(n);
+                                        break;
+                                    case (3):
+                                        copy(n);
+                                        break;
+                                }
                             }
-                        }
-                    }).show();
+                        }).show();
             }
         }));
 
@@ -117,33 +119,34 @@ public class MainActivity extends ActionBarActivity {
             onNewIntent(intent);
         }
 
-        // PLEASE DON'T READ THIS CODE JUST FORGET IT EVER HAPPENED LOOK A PUPPY
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!sp.getBoolean("com.guvery.notifyme.iconsFixed14", false)) {
-            // I am too motherfucking goddamn lazy to figure out why my icons fuck up when
-            // upgrading to the new version of this app (14) (Drawable ids changing or
-            // SOME SHIT FUCK)
-            ArrayList<Notif> littleFuckers = new ArrayList<>();
+        // Uhh...
+        if (!mSharedPrefs.getBoolean("com.guvery.notifyme.iconsFixed14", false)) {
+            // Find the icons that mess up on upgrade to 14
+            ArrayList<Notif> messUps = new ArrayList<>();
             for (Notif n : mDataSet) {
-                if (!ImageAdapter.isAnIcon(n.getImageId())) { // if icon is invalid
-                    littleFuckers.add(n);
+                if (!ImageAdapter.isAnIcon(n.getImageId())) {
+                    messUps.add(n);
                 }
             }
-            // ALL these NOTIF ARE CONFIRMED FOR BEING LITTLE CUNT LICKING FUCK FACES; DELETE
-            // AND REMAKE THESE FAGS WITH CORRECT PARAMETERS
-            for (Notif n : littleFuckers) {
+            // Fix em
+            for (Notif n : messUps) {
                 n.setImageId(CreateActivity.DEFAULT_ICON);
                 removeNotification(n);
                 mNotifHistory.add(n);
                 refreshList();
             }
-            sp.edit().putBoolean("com.guvery.notifyme.iconsFixed14", true).apply();
+            mSharedPrefs.edit().putBoolean("com.guvery.notifyme.iconsFixed14", true).apply();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        // Create it on start
+        Notifier.toggleCreateNotification(
+                mSharedPrefs.getBoolean("settings_create_notification", false));
+
         refreshList();
     }
 

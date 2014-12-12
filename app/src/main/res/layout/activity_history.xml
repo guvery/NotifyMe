@@ -15,7 +15,7 @@
         android:id="@+id/history_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab_create"
@@ -31,7 +31,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
-        android:onClick="create"/>
+        android:onClick="create" />
 
     <TextView
         android:id="@+id/empty"
@@ -40,6 +40,6 @@
         android:textSize="20sp"
         android:fontFamily="sans-serif-light"
         android:gravity="center"
-        android:text="@string/history_list_empty"/>
+        android:text="@string/history_list_empty" />
 
 </RelativeLayout>

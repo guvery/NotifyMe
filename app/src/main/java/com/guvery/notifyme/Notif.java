@@ -1,7 +1,5 @@
 package com.guvery.notifyme;
 
-import java.io.Serializable;
-
 /**
  * Created by Aaron on 10/27/2014.
  */
